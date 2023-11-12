@@ -1,0 +1,15 @@
+.global programa
+.data
+
+	arr: .word 1000
+	e0: .word 5
+
+.text
+programa: 
+	la t1, arr # You can only load the address of your arr into t1
+	lw t2, e0 # Load e0 value into t2
+	sw t2, 0(t1) # save t2 value into the address of arr[0] pointed by t1
+
+finalizar:
+	li a7, 10
+	ecall
