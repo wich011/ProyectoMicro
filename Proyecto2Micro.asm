@@ -10,9 +10,9 @@
 .text
 
 # Macro para llenar la primera matriz
-.macro llenarMatriz filas, columnas
-    li t4, 0  # Índice de fila
-    li t5, 0  # Índice de columna
+.macro llenarMatriz (%filas, %columnas)
+    li t4, 0  # �?ndice de fila
+    li t5, 0  # �?ndice de columna
 
     # Bucle para cada fila
     loopFila:
@@ -29,20 +29,20 @@
             mv t6, a0  # Almacenar el valor en t6
 
             # Calcular la dirección en la matriz para la posición [i, j]
-            mul t7, t4, columnas
-            add t7, t7, t5
-            slli t8, t7, 2  # Multiplicar por 4 para obtener el desplazamiento en bytes
+            mul s7, t4, %columnas
+            add s7, s7, t5
+            slli s8, s7, 2  # Multiplicar por 4 para obtener el desplazamiento en bytes
             la a1, matriz1
-            add t9, a1, t8  # Dirección en la matriz
+            add s9, a1, s8  # Dirección en la matriz
 
             # Almacenar el valor en la matriz
-            sb t6, 0(t9)
+            sb t6, 0(s9)
 
             # Incrementar índice de columna
             addi t5, t5, 1
 
             # Verificar si se ha alcanzado el final de la fila
-            bge t5, columnas, finFila
+            bge t5, %columnas, finFila
 
             j loopColumna
 
@@ -54,7 +54,7 @@
             addi t4, t4, 1
 
             # Verificar si se ha alcanzado el final de la matriz
-            bge t4, filas, finMatriz
+            bge t4, %filas, finMatriz
 
             j loopFila
 
@@ -95,9 +95,8 @@ programa:
     ecall
     mv t2, a0  # t2 COLUMNAS
 
-    llenarMatriz t1, t2
+    llenarMatriz(t1, t2)
 
 finalizar:
     li a7, 10
     ecall
-
