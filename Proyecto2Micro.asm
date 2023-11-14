@@ -1,18 +1,23 @@
 .global programa 
 .data
+    matriz1:
+        .space 100  # Ajusta el tamaño según tus necesidades
     cantMatrices:
         .string "Ingrese la cantidad de matrices que desea: "
     promptValor:
         .string "Ingrese el valor para la posición [i, j]: "
-    matriz1:
-        .space 100  # Ajusta el tamaño según tus necesidades
+
+    cantFilas:
+    	.string "Cantidad de filas: "
+    cantColumnas:
+    	.string "Cantidad de Columnas: "
 
 .text
 
 # Macro para llenar la primera matriz
 .macro llenarMatriz (%filas, %columnas)
-    li t4, 0  # �?ndice de fila
-    li t5, 0  # �?ndice de columna
+    li t4, 0  # �?ndice de fila
+    li s10, 0  # �?ndice de columna
 
     # Bucle para cada fila
     loopFila:
@@ -30,7 +35,7 @@
 
             # Calcular la dirección en la matriz para la posición [i, j]
             mul s7, t4, %columnas
-            add s7, s7, t5
+            add s7, s7, s10
             slli s8, s7, 2  # Multiplicar por 4 para obtener el desplazamiento en bytes
             la a1, matriz1
             add s9, a1, s8  # Dirección en la matriz
@@ -39,16 +44,16 @@
             sb t6, 0(s9)
 
             # Incrementar índice de columna
-            addi t5, t5, 1
+            addi s10, s10, 1
 
             # Verificar si se ha alcanzado el final de la fila
-            bge t5, %columnas, finFila
+            bge s10, %columnas, finFila
 
             j loopColumna
 
         finFila:
             # Reiniciar índice de columna
-            li t5, 0
+            li s10, 0
 
             # Incrementar índice de fila
             addi t4, t4, 1
@@ -60,6 +65,9 @@
 
         finMatriz:
 .end_macro
+
+
+#-------------------------------PROGRAMA-----------------------------------#
 
 programa:
     la a0, cantMatrices
@@ -84,16 +92,32 @@ programa:
     bge t1, s1, finalizar  # 4 matrices maximo
 
     addi t1, t1, -1  # Primera columna
+    
+    li a7, 4
+    la a0, cantFilas
+    ecall
 
     # FILAS
     li a7, 12  # Espera input del teclado, y la guarda en a0
     ecall
-    mv t1, a0  # t1 FILAS
+    mv t5, a0  # t1 FILAS
+    
+    sub t5, t5, s0
+    
+    li a7, 11
+    li a0, '\n'
+    ecall
+    
+    li a7, 4
+    la a0, cantColumnas
+    ecall
 
     # COLUMNAS
     li a7, 12  # Espera input del teclado, y la guarda en a0
     ecall
     mv t2, a0  # t2 COLUMNAS
+    
+    sub t2, t2, s0
 
     llenarMatriz(t1, t2)
 
