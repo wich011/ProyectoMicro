@@ -15,14 +15,16 @@
 .text
 
 # Macro para llenar la primera matriz
-.macro llenarMatriz (%filas, %columnas)
-    li t4, 0  # �?ndice de fila
-    li s10, 0  # �?ndice de columna
 
+.macro llenarMatriz (%filas, %columnas)
+    #suma de indices
+        
+   
+    	loopFila:
     # Bucle para cada fila
-    loopFila:
-        # Bucle para cada columna
-        loopColumna:
+      	     bge t4, %filas, finMatriz
+        
+        loopColumna:  # Bucle para cada columna
             # Imprimir el prompt para el valor en la posición [i, j]
             li a7, 4
             la a0, promptValor
@@ -64,7 +66,13 @@
             j loopFila
 
         finMatriz:
+        
+        
 .end_macro
+
+
+# Resto del código (programa, finalizar, etc.)
+
 
 
 #-------------------------------PROGRAMA-----------------------------------#
@@ -91,8 +99,11 @@ programa:
     li s1, 5  # Si la cantidad de matrices es igual o mayor a 4 se cierra el programa
     bge t1, s1, finalizar  # 4 matrices maximo
 
-    addi t1, t1, -1  # Primera columna
-    
+#etiqueta matrices siguientes
+
+    addi t1, t1, -1  
+
+               
     li a7, 4
     la a0, cantFilas
     ecall
@@ -120,7 +131,10 @@ programa:
     sub t2, t2, s0
 
     llenarMatriz(t1, t2)
+    
+    bn
 
+	
 finalizar:
     li a7, 10
     ecall
