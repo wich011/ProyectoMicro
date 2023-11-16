@@ -15,13 +15,16 @@
 .text
 
 # Macro para llenar la primera matriz
-
+#------------------------------------------MACRO-----------------------------------------
 .macro llenarMatriz (%filas, %columnas)
-    #suma de indices
-        
+ 
+  	     add %filas, %filas, t4
+ 	     add %columnas, %columnas, s10
+   
    
     	loopFila:
     # Bucle para cada fila
+      
       	     bge t4, %filas, finMatriz
         
         loopColumna:  # Bucle para cada columna
@@ -68,8 +71,8 @@
         finMatriz:
         
         
+        
 .end_macro
-
 
 # Resto del código (programa, finalizar, etc.)
 
@@ -86,10 +89,10 @@ programa:
     ecall
     mv t1, a0
 
-    li s0, 48
+    
 
     # Obtener el decimal de cantMatrices
-    sub t1, t1, s0
+    addi t1, t1, -48
 
     li a7, 11
     li a0, '\n'
@@ -100,6 +103,7 @@ programa:
     bge t1, s1, finalizar  # 4 matrices maximo
 
 #etiqueta matrices siguientes
+MatrizFilCol:	
 
     addi t1, t1, -1  
 
@@ -113,7 +117,7 @@ programa:
     ecall
     mv t5, a0  # t1 FILAS
     
-    sub t5, t5, s0
+    addi t5, t5, -48
     
     li a7, 11
     li a0, '\n'
@@ -128,12 +132,22 @@ programa:
     ecall
     mv t2, a0  # t2 COLUMNAS
     
-    sub t2, t2, s0
-
-    llenarMatriz(t1, t2)
+    addi t2, t2, -48
     
-    bn
+    li a7, 11
+    li a0, '\n'
+    ecall 		
+    
+    li t4, 0  # �?ndice de fila
+    li s10, 0  # �?ndice de columna  	
+	
+    llenarMatriz(t5, t2)
+    
+       
+    
+    #Salto para verificar si ya se llenaron todas las matrices
 
+    bne t1, zero, MatrizFilCol
 	
 finalizar:
     li a7, 10
