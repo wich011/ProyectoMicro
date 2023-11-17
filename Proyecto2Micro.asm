@@ -1,12 +1,13 @@
 .global programa 
 .data
     matriz1:
-        .space 500  # Ajusta el tamaño según tus necesidades
+        .space 1000  # Ajusta el tamaño según tus necesidades
     cantMatrices:
         .string "Ingrese la cantidad de matrices que desea: "
     promptValor:
         .string "Ingrese el valor para la posición [i, j]: "
-
+    FilasyColumnas:
+	.string "??????????????????"
     cantFilas:
     	.string "Cantidad de filas: "
     cantColumnas:
@@ -18,7 +19,8 @@
 #------------------------------------------MACRO-----------------------------------------
 .macro llenarMatriz (%filas, %columnas)
  
-  	     add %filas, %filas, t4
+ 	     li s10, 0
+ 	     add %filas, %filas, t4
  	     add %columnas, %columnas, s10
    
    
@@ -48,14 +50,7 @@
             # Almacenar el valor en la matriz
             sb t6, 0(s9)
             
-            # Calcular la dirección en la matriz para la posición [i, j]
-            mul s7, t4, %columnas
-            add s7, s7, s10
-            slli s8, s7, 2  # Multiplicar por 4 para obtener el desplazamiento en bytes
-            la a1, matriz1
-            add s9, a1, s8  # Dirección en la matriz
             
-            lb t6, 0(s9)
             
             mv a0, t6
             
@@ -86,15 +81,10 @@
             j loopFila
 
         finMatriz:
-        
-        
-        
+  
 .end_macro
 
 # Resto del código (programa, finalizar, etc.)
-
-
-
 #-------------------------------PROGRAMA-----------------------------------#
 
 programa:
@@ -106,8 +96,7 @@ programa:
     ecall
     mv t1, a0
 
-    
-
+   
     # Obtener el decimal de cantMatrices
     addi t1, t1, -48
 
@@ -116,7 +105,7 @@ programa:
     ecall
 
     # Limitar cantidad de matrices = 3 matrices
-    li s1, 5  # Si la cantidad de matrices es igual o mayor a 4 se cierra el programa
+    li s1, 9  # Si la cantidad de matrices es igual o mayor a 4 se cierra el programa
     bge t1, s1, finalizar  # 4 matrices maximo
 
 #etiqueta matrices siguientes
@@ -124,7 +113,22 @@ MatrizFilCol:
 
     addi t1, t1, -1  
 
-               
+    #contador para guardar filas y columnas 
+    #contador empieza en 1 con el addi
+    li s5, 0
+    addi s5, s5 1    
+    #comparaciones con contador
+    li s6, 1
+    li s7, 2 
+    li s8, 3
+    li s9, 4
+    li s10, 5
+    li s11, 6
+    li t3, 7
+    li a5, 8
+    li a6, 9
+    la t6, FilasyColumnas
+                   
     li a7, 4
     la a0, cantFilas
     ecall
@@ -155,15 +159,72 @@ MatrizFilCol:
     li a0, '\n'
     ecall 		
     
-
-	
-    llenarMatriz(t5, t2)
+    #saltos para llenar la variable con los datos de las filas y columnas		
     
-       
+    beq s5, s6, datosMatriz1
+    beq s5, s7, datosMatriz2
+    beq s5, s8, datosMatriz3
+    beq s5, s9, datosMatriz4
+    beq s5, s10, datosMatriz5
+    beq s5, s11, datosMatriz6
+    beq s5, t3, datosMatriz7
+    beq s5, a5, datosMatriz8
+    beq s5, a6, datosMatriz9
+    		
+    datosMatriz1:
+    	sb t5, 0(t6)
+    	sb t2, 1(t6)	
+    	li a7, 11
+    	ecall
+    	j LlenadoMatriz   	
+    datosMatriz2:
+   	sb t5, 2(t6)
+    	sb t2, 3(t6)
+    	j LlenadoMatriz
+    datosMatriz3:
+    	sb t5, 4(t6)
+    	sb t2, 5(t6)	
+    	j LlenadoMatriz
+    datosMatriz4:
+   	sb t5, 6(t6)
+    	sb t2, 7(t6)
+    	j LlenadoMatriz
+    datosMatriz5:
+    	sb t5, 8(t6)
+    	sb t2, 9(t6)
+    	j LlenadoMatriz	
+    datosMatriz6:
+   	sb t5, 10(t6)
+    	sb t2, 11(t6)
+    	j LlenadoMatriz
+    datosMatriz7:
+    	sb t5, 12(t6)
+    	sb t2, 13(t6)	
+    	j LlenadoMatriz
+    datosMatriz8:
+   	sb t5, 14(t6)
+    	sb t2, 15(t6)
+    	j LlenadoMatriz
+    datosMatriz9:
+   	sb t5, 16(t6)
+    	sb t2, 17(t6)
+    	j LlenadoMatriz
+	
+    LlenadoMatriz:
+    
+    llenarMatriz(t5, t2)
     
     #Salto para verificar si ya se llenaron todas las matrices
 
     bne t1, zero, MatrizFilCol
+    #J SALTOSIGUIENTEINSTRUCCION
+    #HACER UN SALTO A LO SIGUIENTE QUE SE NECESITE 
+    
+    #etiquetas para llenar la variable
+    
+    
+    
+    
 	
 finalizar:
     li a7, 10
