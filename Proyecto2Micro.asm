@@ -1,7 +1,7 @@
 .global programa 
 .data
     matriz1:
-        .space 100  # Ajusta el tamaño según tus necesidades
+        .space 500  # Ajusta el tamaño según tus necesidades
     cantMatrices:
         .string "Ingrese la cantidad de matrices que desea: "
     promptValor:
@@ -47,6 +47,23 @@
 
             # Almacenar el valor en la matriz
             sb t6, 0(s9)
+            
+            # Calcular la dirección en la matriz para la posición [i, j]
+            mul s7, t4, %columnas
+            add s7, s7, s10
+            slli s8, s7, 2  # Multiplicar por 4 para obtener el desplazamiento en bytes
+            la a1, matriz1
+            add s9, a1, s8  # Dirección en la matriz
+            
+            lb t6, 0(s9)
+            
+            mv a0, t6
+            
+            addi a0, a0, 48
+            
+           li a7, 11
+           ecall 
+           
 
             # Incrementar índice de columna
             addi s10, s10, 1
@@ -138,8 +155,7 @@ MatrizFilCol:
     li a0, '\n'
     ecall 		
     
-    li t4, 0  # �?ndice de fila
-    li s10, 0  # �?ndice de columna  	
+
 	
     llenarMatriz(t5, t2)
     
