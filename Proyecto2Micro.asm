@@ -13,12 +13,18 @@
     cantColumnas:
     	.string "Cantidad de Columnas: "
     ResultadoTemp:
-		.space 81
+	.space 81
     ErrorMsg:
 		.string "Las filas y las columnas no son validas para realizar la operacion\n"
 .text
 # Macro para llenar la primera matriz
 #------------------------------------------MACRO-----------------------------------------
+
+.macro sacarvalores (%filas1, %columna1, %filas12, %columna12)
+
+
+.end_macro 
+
 .macro llenarMatriz (%filas, %columnas)
  
  	     li s10, 0
@@ -50,7 +56,7 @@
             add s9, a1, s8  # Direcci�n en la matriz
 
             # Almacenar el valor en la matriz
-            sb t6, 0(s9)
+            sb t6, 0(s9) 
             # Incrementar índice de columna
             addi s10, s10, 1
 
@@ -122,11 +128,9 @@ SumarMatricesV: # suma las matrices que estan dentro de una misma variable
 		#obtengo la posicion inicial de la matriz y la almaceno en t0
 		ObtenerPosicion(%Nmatriz1)
 		mv t0,s2
-		addi t0,t0,-48
 		#obtengo la posicion inicial de la matriz y la almaceno en t1
 		ObtenerPosicion(%Nmatriz2)
 		mv t1,s2
-		addi t1,t1,-48
 		#Obtenemos la fila y columna t2 y t3
 	   	ObtenerFila_Columna(%Nmatriz1)
 	   	mv t2,s4
@@ -141,7 +145,7 @@ SumarMatricesV: # suma las matrices que estan dentro de una misma variable
 	   	la s1,%Matriz2	   	
 #avanza la cantidad de caracteres indicada en t0 y t1
 	   	add s0,s0,t0
-	   	add s1,s1,t1
+	   	add s1,s1,t1 
 	   	li s2,0
 	   	la s3,ResultadoTemp
 	   	#inicio el loop de la suma
@@ -149,8 +153,6 @@ Loop_Suma:
 		beq t4,s2,Finalizar	
 		lb s11,0(s0)
 		lb s10,0(s1)
-		addi s11,s11,-48
-		addi s10,s10,-48
 	   	#Realizamos la suma
 	   	add s8,s10,s11
 	   	#almacenamos s8 como entero
@@ -187,7 +189,6 @@ programa:
     ecall
     mv t1, a0
 
-   
     # Obtener el decimal de cantMatrices
     addi t1, t1, -48
 
@@ -196,18 +197,14 @@ programa:
     ecall
 
     # Limitar cantidad de matrices = 9 matrices
-    li s1, 9  # Si la cantidad de matrices es igual o mayor a 9 se cierra el programa
-    bge t1, s1, finalizar  # 9 matrices maximo
+    li s1, 9  # Si la cantidad de matrices es igual o mayor a 4 se cierra el programa
+    bge t1, s1, finalizar  # 4 matrices maximo
 
 #etiqueta matrices siguientes
 MatrizFilCol:	
 
     addi t1, t1, -1  
-
-    #contador para guardar filas y columnas 
-    #contador empieza en 1 con el addi
-    li s5, 0
-    addi s5, s5 1    
+    
     #comparaciones con contador
     li s6, 1
     li s7, 2 
@@ -228,7 +225,7 @@ MatrizFilCol:
     li a7, 12  # Espera input del teclado, y la guarda en a0
     ecall
     mv t5, a0  # t1 FILAS
-    
+    mv tp, a0
     addi t5, t5, -48
     
     li a7, 11
@@ -243,14 +240,15 @@ MatrizFilCol:
     li a7, 12  # Espera input del teclado, y la guarda en a0
     ecall
     mv t2, a0  # t2 COLUMNAS
-    
+    mv ra, a0
     addi t2, t2, -48
     
     li a7, 11
     li a0, '\n'
     ecall 		
     
-    #saltos para llenar la variable con los datos de las filas y columnas		
+    #saltos para llenar la variable con los datos de las filas y columnas
+    addi s5, s5, 1		
     
     beq s5, s6, datosMatriz1
     beq s5, s7, datosMatriz2
@@ -262,43 +260,42 @@ MatrizFilCol:
     beq s5, a5, datosMatriz8
     beq s5, a6, datosMatriz9
     		
-    datosMatriz1:
-    	sb t5, 0(t6)
-    	sb t2, 1(t6)	
-    	li a7, 11
-    	ecall
+    datosMatriz1:	    
+   	sb tp, 0(t6)
+    	sb ra, 1(t6)	
+  	ecall    	
     	j LlenadoMatriz   	
     datosMatriz2:
-   	sb t5, 2(t6)
-    	sb t2, 3(t6)
+   	sb tp, 2(t6)
+    	sb ra, 3(t6)
     	j LlenadoMatriz
     datosMatriz3:
-    	sb t5, 4(t6)
-    	sb t2, 5(t6)	
+    	sb tp, 4(t6)
+    	sb ra, 5(t6)	
     	j LlenadoMatriz
     datosMatriz4:
-   	sb t5, 6(t6)
-    	sb t2, 7(t6)
+   	sb tp, 6(t6)
+    	sb ra, 7(t6)
     	j LlenadoMatriz
     datosMatriz5:
-    	sb t5, 8(t6)
-    	sb t2, 9(t6)
+    	sb tp, 8(t6)
+    	sb ra, 9(t6)
     	j LlenadoMatriz	
     datosMatriz6:
-   	sb t5, 10(t6)
-    	sb t2, 11(t6)
+   	sb tp, 10(t6)
+    	sb ra, 11(t6)
     	j LlenadoMatriz
     datosMatriz7:
-    	sb t5, 12(t6)
-    	sb t2, 13(t6)	
+    	sb tp, 12(t6)
+    	sb ra, 13(t6)	
     	j LlenadoMatriz
     datosMatriz8:
-   	sb t5, 14(t6)
-    	sb t2, 15(t6)
+   	sb tp, 14(t6)
+    	sb ra, 15(t6)
     	j LlenadoMatriz
     datosMatriz9:
-   	sb t5, 16(t6)
-    	sb t2, 17(t6)
+   	sb tp, 16(t6)
+    	sb ra, 17(t6)
     	j LlenadoMatriz
 	
         LlenadoMatriz:
@@ -310,10 +307,8 @@ MatrizFilCol:
     bne t1, zero, MatrizFilCol
     li a6,2
     li a5,1
-    la a0,FilasyColumnas
-    li a7,4
-    ecall
     Suma(matriz1,a5,matriz1,a6)
+
 finalizar:
     li a7, 10
     ecall
