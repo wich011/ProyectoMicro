@@ -14,6 +14,8 @@
     	.string "Cantidad de Columnas: "
     ResultadoTemp:
 	.space 81
+    F_C_ResultadoTemp:
+    	.string "??"
     ErrorMsg:
 		.string "Las filas y las columnas no son validas para realizar la operacion\n"
 .text
@@ -114,7 +116,7 @@
     		lb s6, 1(s4)
     		addi s4, s5, -48
     		addi s5, s6, -48
-.end_macro
+	.end_macro
 #-------------------------------Macro para realizar la suma---------------------------------	
 .macro Suma(%Matriz1,%Nmatriz1,%Matriz2,%Nmatriz2)
 		slt s0, %Nmatriz1, x0   # Compara n1 con cero y almacena el resultado en s0
