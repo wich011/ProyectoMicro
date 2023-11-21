@@ -2,33 +2,28 @@
 .data
     matriz1:
         .space 1000  # Ajusta el tamaño según tus necesidades
+    ResultadoTemp:
+	.space 81
     cantMatrices:
         .string "Ingrese la cantidad de matrices que desea: "
     promptValor:
-        .string "Ingrese el valor para la posici�n [i, j]: "
+        .string "Ingrese el valor para la posici�n [i, j]: "
     FilasyColumnas:
-	    .string "??????????????????"
+	.string "??????????????????"
     cantFilas:
     	.string "Cantidad de filas: "
     cantColumnas:
     	.string "Cantidad de Columnas: "
-    ResultadoTemp:
-	.space 81
     F_C_ResultadoTemp:
-    	.string "??"
+    		.string "??"
     ErrorMsg:
 		.string "Las filas y las columnas no son validas para realizar la operacion\n"
 .text
 # Macro para llenar la primera matriz
 #------------------------------------------MACRO-----------------------------------------
-
-.macro sacarvalores (%filas1, %columna1, %filas12, %columna12)
-
-
-.end_macro 
-
 .macro llenarMatriz (%filas, %columnas)
- 
+ 		#indice fila t4
+ 		#indice columna s4
  	     li s10, 0
  	     add %filas, %filas, t4
  	     add %columnas, %columnas, s10
@@ -144,25 +139,34 @@ SumarMatricesV: # suma las matrices que estan dentro de una misma variable
 	   	bne t4,t5,Error
 #Operaciones de suma
 	   	la s0,%Matriz1
-	   	la s1,%Matriz2	   	
+	   	la s1,%Matriz2	
 #avanza la cantidad de caracteres indicada en t0 y t1
 	   	add s0,s0,t0
+	   	slli t1, t1, 2   #Multiplicar t1 por 4 (2^2)
 	   	add s1,s1,t1 
 	   	li s2,0
+	   	mul s6, t2, t3  # s6 tiene el tamaño de la matriz, por ejemplo, filas x columnas
+		slli s6, s6, 1   # Multiplica por 4 para obtener el desplazamiento en bytes
 	   	la s3,ResultadoTemp
+	   	add s6, s3, s6
+	   	li t6,1
+	   	li s2,1
 	   	#inicio el loop de la suma
 Loop_Suma:
-		beq t4,s2,Finalizar	
+		bge  s2,t4,Finalizar		
 		lb s11,0(s0)
 		lb s10,0(s1)
 	   	#Realizamos la suma
 	   	add s8,s10,s11
+	   	
 	   	#almacenamos s8 como entero
-	   	sb s8,0(s3)
+	   	sw s8,0(s6)
+	   	ecall
 	   	#incrementamos el contador
+	   	addi s6, s6,2
+	   	addi s0,s0,2
+	   	addi s1,s1,2
 	   	addi s2,s2,1
-	   	addi s0,s0,1
-	   	addi s1,s1,1
 	   	j Loop_Suma	
 	   	j Finalizar
 SumarMatricesSeparadas1: #Suma la primera matriz tomando resultado como matriz
@@ -201,12 +205,13 @@ programa:
     # Limitar cantidad de matrices = 9 matrices
     li s1, 9  # Si la cantidad de matrices es igual o mayor a 4 se cierra el programa
     bge t1, s1, finalizar  # 4 matrices maximo
+    
 
 #etiqueta matrices siguientes
 MatrizFilCol:	
 
     addi t1, t1, -1  
-    
+
     #comparaciones con contador
     li s6, 1
     li s7, 2 
